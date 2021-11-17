@@ -1,5 +1,5 @@
 import React, { useState, useEfect } from 'react';
-
+import {Link} from 'react-router-dom';
 function QuestionPage(){
     return (
         <div>
@@ -9,7 +9,9 @@ function QuestionPage(){
                 중요하게 생각하는지를 알려주고, 중요 가치를 충족시켜줄 수 있는
                 직업에 대해 생각해 볼 기회를 제공합니다.
             </p>
-            <button>결과보기</button>
+            <Link to ="/result">
+                <button disabled={false}>결과보기</button>
+            </Link>  
         </div>
     );
 }

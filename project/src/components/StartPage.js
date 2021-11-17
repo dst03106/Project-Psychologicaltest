@@ -1,15 +1,18 @@
-import React, { useState, useEfect } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import {Link} from 'react-router-dom';
 function StartPage(){
+    // user 정보를 useState 로 관리? 
+    // 아니면 url에 user정보를 나타나게 해서 searchParams, useRef로 관리? 
     const [user, setUser] = useState({
         name: "",
         gender: ""
     })
     const handleChange = (e) => {
         const { name, value } = e.target;
-        const newUser = {...user};
-        newUser[name] = value;
-        setUser(newUser);
+        setUser({
+            ...user,
+            [name]:value
+        });
     };
     const handleSubmit = (e) => {
         e.preventDefault();      
@@ -22,7 +25,9 @@ function StartPage(){
             <p>성별</p>
             <input type="radio"  name='gender' value='남자' onChange={handleChange}/>남자<br/>
             <input type="radio"  name='gender' value='여자' onChange={handleChange}/>여자<br/>
-            <button type="submit" disabled={user.name.length==0 || user.gender.length==0}>검사시작</button>
+            <Link to ="/example">
+                <button type="submit" disabled={user.name.length==0 || user.gender.length==0}>검사시작</button>
+            </Link>           
         </form>
     );
 }
