@@ -2,25 +2,40 @@ import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 
+const URL = 'https://www.career.go.kr/inspct/openapi/test/questions?';
+const APIKEY = '22b308e00e924ac13272794919934f05'; // 인증키 
+const Q = '6'
+
 function ExamplePage(){
-    const [questions, setQuestions] = useState([]);
+    const [data, setData] = useState([]);
+
     useEffect(()=>{
-        const fetchQuestions = async() => {
+        const fetchData = async() => {
+
             try{
-                const response = await axios.get(
-                    'https://www.career.go.kr/inspct/openapi/test/questions?apikey=22b308e00e924ac13272794919934f05&q=6'
-                );
-                setQuestions(response.data.RESULT);
-                console.log(questions);
+                const response = await axios.get(URL, {
+                    params : {
+                        apikey : APIKEY,
+                        q : Q
+                    }
+                });
+                setData(response.data.RESULT);
             } catch(e){
                 console.log(e);
             }
         };
 
-        fetchQuestions();
-    },[])     
+        fetchData();
+    },[])
 
-    const question0= questions[0];
+    const qList = data.map((item,index) => (
+        <li key={index}>
+            {item.question}<br/>
+            <input type="radio" name="answer"/>{item.answer01}
+            <input type="radio" name="answer"/>{item.answer02}
+        </li>   
+    ));
+
     return (
         <div>
             <h1>검사예시</h1>
@@ -31,11 +46,7 @@ function ExamplePage(){
             <p>
                 가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요.
             </p>
-            {questions && questions.length}
-            {questions && question0.question}
-            {/* {questions && questions[0].question}
-            {questions && questions[0].answer01}
-            {questions && questions[0].answer02} */}
+            {qList[0]}
             <Link to ="/question">
                 <button type="submit" disabled={false}>검사시작</button>
             </Link>  
