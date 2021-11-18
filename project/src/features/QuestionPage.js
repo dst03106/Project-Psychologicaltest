@@ -2,24 +2,26 @@ import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 
+const URL = 'https://www.career.go.kr/inspct/openapi/test/questions?';
+const APIKEY = '22b308e00e924ac13272794919934f05'; // 인증키 
+const Q = '6'
+
 function QuestionPage(){
-    // const client_key = '22b308e00e924ac13272794919934f05'; // 인증키 
-    // const num = '6'; // 직업가치관검사(일반)
+
     const [questions, setQuestions] = useState([]);
-    // axios
-    //     .get('https://www.career.go.kr/inspct/openapi/test/questions?apikey=22b308e00e924ac13272794919934f05&q=6')
-    //     .then(res => res.data.RESULT)
-    //     .then(setQuestions)
 
     useEffect(()=>{
         const fetchQuestions = async() => {
-            const client_key = '22b308e00e924ac13272794919934f05'; // 인증키 
+            
             const num = '6'; // 직업가치관검사(일반)
 
             try{
-                const response = await axios.get(
-                    'https://www.career.go.kr/inspct/openapi/test/questions?apikey=22b308e00e924ac13272794919934f05&q=6'
-                );
+                const response = await axios.get(URL, {
+                    params : {
+                        apikey : APIKEY,
+                        q : Q
+                    }
+                });
                 setQuestions(response.data.RESULT);
             } catch(e){
                 console.log(e);
