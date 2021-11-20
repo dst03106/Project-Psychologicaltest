@@ -28,14 +28,20 @@ function ExamplePage(){
         fetchData();
     },[])
 
-    const qList = data.map((item,index) => (
-        <li key={index}>
-            {item.question}<br/>
-            <input type="radio" name="answer"/>{item.answer01}
-            <input type="radio" name="answer"/>{item.answer02}
-        </li>   
-    ));
-
+    
+    let qList = data
+        .filter((item) => {
+            return item.qitemNo == 1;
+        })
+        .map((item,index) => {
+            return (
+                <li key={index}>
+                    {item.question}<br/>
+                    <input type="radio" name={item.qitemNo}/>{item.answer01}
+                    <input type="radio" name={item.qitemNo}/>{item.answer02}
+                </li>   
+            )
+        });
     return (
         <div>
             <h1>검사예시</h1>
@@ -46,7 +52,7 @@ function ExamplePage(){
             <p>
                 가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요.
             </p>
-            {qList[0]}
+            {qList}
             <Link to ="/question">
                 <button type="submit" disabled={false}>검사시작</button>
             </Link>  
