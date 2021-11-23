@@ -1,33 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
-import axios from 'axios';
+
 
 const URL = 'https://www.career.go.kr/inspct/openapi/test/questions?';
 const APIKEY = '22b308e00e924ac13272794919934f05'; // 인증키 
 const Q = '6'
 
-function ExamplePage(){
-    const [data, setData] = useState([]);
-
-    useEffect(()=>{
-        const fetchData = async() => {
-
-            try{
-                const response = await axios.get(URL, {
-                    params : {
-                        apikey : APIKEY,
-                        q : Q
-                    }
-                });
-                setData(response.data.RESULT);
-            } catch(e){
-                console.log(e);
-            }
-        };
-
-        fetchData();
-    },[])
-
+function ExamplePage({data}){
     
     let qList = data
         .filter((item) => {
@@ -42,6 +21,8 @@ function ExamplePage(){
                 </li>   
             )
         });
+    
+        
     return (
         <div>
             <h1>검사예시</h1>

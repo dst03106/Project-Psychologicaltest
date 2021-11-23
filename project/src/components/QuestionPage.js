@@ -1,68 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import {Link} from 'react-router-dom';
-import axios from 'axios';
+// 추후 할 일 : 너무 쓸데없는 리렌더링 방지하기 - 5개 다받으면 렌더링되게?? Ref이용할까 말까 
 
-const URL = 'https://www.career.go.kr/inspct/openapi/test/questions?';
-const APIKEY = '22b308e00e924ac13272794919934f05'; // 인증키 
-const Q = '6'
 
-function QuestionPage(){
-    const [data, setData] = useState([]);
+function QuestionPage({data, onChange}){
+    // const [data, setData] = useState([]);
     const [curPage, setCurPage] = useState(1);
     // answer를 배열안의 객체로 설정할지, 그냥 객체로 설정할지.. 
-    const [answers, setAnswers] = useState({});
+    const [answers, setAnswers] = useState([]);
+    const [checked, setChecked] = useState([]);
     // const inputRef = useRef(null);
     const pageLimit = 5;
     const pageLen = parseInt(data.length/pageLimit) + 1;
 
-    useEffect(()=>{
-        const fetchData = async() => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        const newAns = [...answers];
+        const newChecked = [...checked];
+        newAns[name-1] = `B${name}=${value}`;
+        newChecked[name-1] = true;
+        setAnswers(newAns);
+        setChecked(newChecked)
+        console.log('handleChange');      
+    };
 
-            try{
-                const response = await axios.get(URL, {
-                    params : {
-                        apikey : APIKEY,
-                        q : Q
-                    }
-                });
-                setData(response.data.RESULT);
-            } catch(e){
-                console.log(e)
-            }
-        };
-
-        fetchData();
-    },[])
-
-    // const onChange = (e) => {
-    //     if (inputRef.current) {
-    //         inputRef.current.value = e.target.value;
-    //     }
-    // }
+    
     
     useEffect(()=>{       
         console.log('useEffect');
         console.log(answers);
+        console.log(data.length)
+        // 왜 Object로 나올까 
+        console.log(typeof answers);
+        console.log(answers.join(' '));
         console.log(Object.keys(answers).length);
     },[answers])
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        // const newAnswer = {
-        //     [name] : value
-        // };
-        // setAnswers(answers.concat(newAnswer));
-        setAnswers({
-            ...answers,
-            [name]:value
-        });
-        console.log('handleChange');
-        // console.log(answers);
-        // console.log(answers.length);
+    const handleChecked = (e)=>{
+        const name = e.target.name
+        return (
+            answers[name-1]? true:false
+        )
     };
 
-    
-    let qList = data
+    let qList = new Array();
+    qList[curPage-1] = data
         .filter((item) => {       
             // console.log('(1)'+ item.qitemNo)
             // console.log('(2)'+ item.qitemNo-1) // NaN 출력..?
@@ -70,15 +52,19 @@ function QuestionPage(){
             return item.qitemNo>pageLimit*(curPage-1) && item.qitemNo<=pageLimit*curPage;
             // return parseInt(item.qitemNo-1/pageLimit) + 1 == curPage;
         })
-        .map((item,index) => {
+        .map((item) => {
             return (
                 <li key={item.qitemNo}>
                     {item.qitemNo}번.
                     {item.question}<br/>
                     <input type="radio" name={item.qitemNo} value = {item.answerScore01} onChange={handleChange} 
-                    checked = {answers[item.qitemNo]==item.answerScore01? true:false}/>{item.answer01}
+                    defaultchecked = {checked[item.qtemNo-1]}/>{item.answer01}
                     <input type="radio" name={item.qitemNo} value = {item.answerScore02} onChange={handleChange} 
-                    checked = {answers[item.qitemNo]==item.answerScore02? true:false}/>{item.answer02}
+                    defaultchecked = {checked[item.qtemNo-1]}/>{item.answer02}
+                    {/* <input type="radio" name={item.qitemNo} value = {item.answerScore01} onChange={handleChange} 
+                    defaultchecked = {answers[item.qtemNo-1]? true:false}/>{item.answer01}
+                    <input type="radio" name={item.qitemNo} value = {item.answerScore02} onChange={handleChange} 
+                    defaultchecked = {answers[item.qtemNo-1]? true:false}/>{item.answer02} */}
                 </li>   
             )
         });
@@ -101,7 +87,7 @@ function QuestionPage(){
             </ul>
             {curPage != 1 && <button onClick={gotoPrevPage}>이전</button>}
             {curPage != pageLen && <button onClick={gotoNextPage}>다음</button>}
-            {curPage == pageLen && <Link to ="/completion"><button  disabled={ Object.keys(answers).length == data.length? false:true  }>다음</button></Link>}
+            {curPage == pageLen && <Link to ="/completion"><button  name="answers" value={answers.join(' ')} disabled={ Object.keys(answers).length == data.length? false:true  } onClick={onChange}>다음</button></Link>}
         </>
     );
 }
