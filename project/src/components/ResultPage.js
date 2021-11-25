@@ -4,7 +4,9 @@ import axios from 'axios';
 
 function ResultPage(){
     const [result, setResult] = useState();
-    
+    useEffect(()=> {
+        console.log('ResultPage.js에서 리렌더링')
+    })
     useEffect(()=>{
         const Post = async() => {
             try{

@@ -17,7 +17,9 @@ function StartPage({username, gender, onChange}){
     const handleSubmit = (e) => {
         e.preventDefault()
     }
-    
+    useEffect(()=> {
+        console.log('Start.js에서 리렌더링')
+    })
     return(
         <form onSubmit = {handleSubmit}>
             <h1>직업가치관검사</h1>

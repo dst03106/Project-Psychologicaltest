@@ -1,12 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
-function QuestionPage({result}){
+function CmpltPage({result}){
     const handleChange = (e) => {
         console.log(result)
         window.location.assign(result)
         getHtml();
     }
+
+    useEffect(()=> {
+        console.log('CmpltPage.js에서 리렌더링')
+    })
+
     async function getHtml() {
         try {
             const response = await axios.get(result,{
@@ -38,4 +43,4 @@ function QuestionPage({result}){
     );
 }
 
-export default QuestionPage;
+export default CmpltPage;
