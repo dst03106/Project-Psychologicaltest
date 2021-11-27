@@ -1,14 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
-import { Link } from "react-router-dom";
-import api from "../api";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Link, useHistory } from "react-router-dom";
+import Question from "./Question";
+import api from "../../api";
 
-// Custom Hook
+// Hooks 폴더 만들어서 분리하기
 function useLocalStorage(key, defaultValue = null) {
   const [value, setValue] = useState(() => {
     try {
@@ -27,58 +22,22 @@ function useLocalStorage(key, defaultValue = null) {
 
   const reset = (key) => {
     window.localStorage.removeItem(key);
+    setValue([]);
   };
 
   return [value, setValue, reset];
 }
 
-const Question = ({
-  visible,
-  question,
-  answer01,
-  answer02,
-  answerScore01,
-  answerScore02,
-  qitemNo,
-  handleChange,
-  initalValue,
-}) => {
-  return (
-    <>
-      <div style={{ display: visible ? "block" : "none" }}>
-        <div>{question}</div>
-        <div>
-          <input
-            type="radio"
-            id={answerScore01}
-            name={qitemNo}
-            value={answerScore01}
-            onChange={handleChange}
-            defaultChecked={initalValue === answerScore01}
-          />
-          <label htmlFor={answerScore01}>{answer01}</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id={answerScore02}
-            name={qitemNo}
-            value={answerScore02}
-            onChange={handleChange}
-            defaultChecked={initalValue === answerScore02}
-          />
-          <label htmlFor={answerScore02}>{answer02}</label>
-        </div>
-      </div>
-    </>
-  );
-};
-function TestPage1() {
+function Test() {
+  const history = useHistory();
   const [questions, setQuestions] = useState([]);
-  const [selectedVal, setSelectedVal, reset] = useLocalStorage("temp", []);
+  const [selectedVal, setSelectedVal, reset] = useLocalStorage(
+    "selectedVal",
+    []
+  );
   const [curPage, setCurPage] = useState(1);
   const pageLimit = 5;
-  const pageLen = parseInt(questions.length / pageLimit) + 1;
+  const lastPageIdx = parseInt(questions.length / pageLimit) + 1;
 
   useEffect(() => {
     console.log(selectedVal);
@@ -115,26 +74,57 @@ function TestPage1() {
   function gotoNextPage() {
     setCurPage((cur) => cur + 1);
   }
+
+  const isDisabled = useMemo(() => {
+    for (let i = pageLimit * (curPage - 1); i < pageLimit * curPage; i++) {
+      if (!selectedVal[i]) {
+        return true;
+      } else if (i === questions.length - 1) {
+        return false;
+      }
+    }
+    return false;
+  }, [selectedVal, curPage]);
+
+  const handleSubmit = async () => {
+    // 일단 임시로 정의
+    const name = "홍길동";
+    const gender = "100323";
+    const startDtm = 1550466291034;
+
+    const answers = selectedVal
+      .map((item, idx) => {
+        return `B${idx + 1}=${item}`;
+      })
+      .join(" ");
+    const res = await api.test.submit({ name, gender, startDtm, answers });
+    if (res?.url) {
+      const seq = res.url.split("seq=").pop();
+      seq && history.push("/completed", { seq });
+    }
+  };
+
   return (
     <>
       <h1>검사진행</h1>
-      <button onClick={(e) => reset(e.target.value)} value="temp">
-        temp
-      </button>
       <button onClick={(e) => reset(e.target.value)} value="selectedVal">
-        selectedVal
+        초기화
       </button>
       {curPage != 1 && <button onClick={gotoPrevPage}>이전</button>}
-      {curPage != pageLen && <button onClick={gotoNextPage}>다음</button>}
-      {curPage == pageLen && (
+      {curPage != lastPageIdx && (
+        <button onClick={gotoNextPage} disabled={isDisabled}>
+          다음
+        </button>
+      )}
+      {curPage == lastPageIdx && (
+        <button disabled={isDisabled} onClick={handleSubmit}>
+          다음1
+        </button>
+      )}
+      {curPage == lastPageIdx && (
         <Link to="/completion">
-          <button
-          // name="answers"
-          // value={answers.join(" ")}
-          // disabled={Object.keys(answers).length == data.length ? false : true}
-          // onClick={onChange}
-          >
-            다음
+          <button disabled={isDisabled} onClick={handleSubmit}>
+            다음2
           </button>
         </Link>
       )}
@@ -144,6 +134,8 @@ function TestPage1() {
           question,
           answer01,
           answer02,
+          answer03,
+          answer04,
           answerScore01,
           answerScore02,
           qitemNo,
@@ -154,6 +146,8 @@ function TestPage1() {
               question={question}
               answer01={answer01}
               answer02={answer02}
+              answer03={answer03}
+              answer04={answer04}
               answerScore01={answerScore01}
               answerScore02={answerScore02}
               qitemNo={qitemNo}
@@ -167,4 +161,4 @@ function TestPage1() {
   );
 }
 
-export default TestPage1;
+export default Test;

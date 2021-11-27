@@ -1,13 +1,13 @@
 import logo from "./logo.svg";
 import "./App.css";
 import React, { useState, useEffect, useCallback, useReducer } from "react";
-import StartPage from "./components/StartPage";
-import CmpltPage from "./components/CmpltPage";
+import StartPage from "./pages/StartPage";
+import Completed from "./pages/Completed";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import ExamplePage from "./components/ExamplePage";
-import TestPage from "./components/TestPage";
-import TestPage1 from "./components/TestPage1";
-import ResultPage from "./components/ResultPage";
+import ExamplePage from "./pages/ExamplePage";
+import TestPage from "./pages/TestPage";
+import Test from "./pages/Test";
+import Result from "./pages/Result";
 import axios from "axios";
 
 const URL = "https://www.career.go.kr/inspct/openapi/test/questions?";
@@ -155,15 +155,15 @@ function App() {
         </Route>
 
         <Route path="/test">
-          <TestPage1/>
+          <Test />
         </Route>
 
-        <Route path="/completion">
-          <CmpltPage result={result} />
+        <Route path="/completed">
+          <Completed />
         </Route>
 
         <Route path="/result">
-          <ResultPage />
+          <Result />
         </Route>
       </Switch>
     </BrowserRouter>
