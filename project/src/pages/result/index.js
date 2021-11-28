@@ -3,14 +3,43 @@ import { Link, useLocation } from "react-router-dom";
 import api from "../../api";
 import Chart from "./Chart";
 import Table from "./Table";
+import styled from "styled-components";
+import { userState } from "../../state/userState";
+import { useRecoilState } from "recoil";
+
+const Container = styled.div`
+  background-color: white;
+  border: 1px solid #f0f1f3;
+  border-radius: 8px;
+  width: auto;
+  box-sizing: border-box;
+  padding: 28px 24px;
+  position: relative;
+  margin: 50px auto;
+`;
+
+const ChartContainer = styled.div`
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const TableContainer = styled.div`
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+`;
 
 export default function Result() {
+  const [user, setUser] = useRecoilState(userState);
   const [report, setReport] = useState({});
   const [jobsByEdu, setJobsByEdu] = useState();
   const [jobsByMajor, setJobsByMajor] = useState();
   const location = useLocation();
   const { seq } = location?.state?.seq ? location.state : "";
-
+  let today = new Date();
+  let todayDate = `${today.getFullYear()}/${today.getMonth()}/${today.getDate()}`;
+  console.log(user);
   const reportScores = useMemo(() => {
     if (report?.result?.wonScore) {
       const scores = report.result.wonScore
@@ -129,20 +158,65 @@ export default function Result() {
     },
   ];
 
+  const userColumnsData = [
+    {
+      Header: "이름",
+      accessor: "username",
+    },
+    {
+      Header: "성별",
+      accessor: "gender",
+    },
+    {
+      Header: "검사일",
+      accessor: "date",
+    },
+  ];
+  const userData = useMemo(
+    () => [
+      {
+        username: user.username,
+        gender: user.gender,
+        today: todayDate,
+      },
+    ],
+    [user]
+  );
+
+  const userColumns = useMemo(() => userColumnsData, []);
   const columns = useMemo(() => columnData, [columnData]);
   return (
-    <div>
-      <h1>직업가치관검사 결과표</h1>
-      <h2>직업가치관결과</h2>
-      <Chart scores={reportScores} />
-      <h2>가치관과 관련이 높은 직업</h2>
-      <h3>종사자 평균 학력별</h3>
-      {jobsByEdu && <Table columns={columns} data={jobsByEdu} />}
-      <h3>종사자 평균 전공별</h3>
-      {jobsByMajor && <Table columns={columns} data={jobsByMajor} />}
-      <Link to="/">
-        <button>다시검사하기</button>
-      </Link>
-    </div>
+    <Container>
+      <div className="text-center">
+        <h1>직업가치관검사 결과표</h1>
+        <hr />
+        <TableContainer>
+          {/* {user && <Table columns={userColumns} data={userData} />} */}
+        </TableContainer>
+        <ChartContainer>
+          <h2>직업가치관결과</h2>
+          <Chart scores={reportScores} />
+        </ChartContainer>
+        <h2>가치관과 관련이 높은 직업</h2>
+        <TableContainer>
+          <h3>종사자 평균 학력별</h3>
+          {jobsByEdu && <Table columns={columns} data={jobsByEdu} />}
+          <h3>종사자 평균 전공별</h3>
+          {jobsByMajor && <Table columns={columns} data={jobsByMajor} />}
+        </TableContainer>
+        <Link to="/">
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            onClick={() => {
+              window.localStorage.removeItem("selectedVal");
+              setUser();
+            }}
+          >
+            다시검사하기
+          </button>
+        </Link>
+      </div>
+    </Container>
   );
 }
