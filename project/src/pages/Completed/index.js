@@ -24,11 +24,9 @@ export default function Completed() {
 
   const fetchReport = useCallback(async () => {
     const res = await api.result.getReport({ seq });
-    console.log(res);
     if (res) {
       const { name, grade } = res.user;
       const { registDt } = res.inspct;
-      console.log({ name, grade, registDt });
       setAnswer({
         username: name,
         gender: grade == "100323" ? "남자" : "여자",
@@ -41,8 +39,6 @@ export default function Completed() {
   useEffect(() => {
     fetchReport();
   }, [fetchReport]);
-
-  useEffect(() => console.log(answer), [answer]);
 
   return (
     <Container>

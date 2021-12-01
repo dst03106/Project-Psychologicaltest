@@ -19,7 +19,6 @@ const Container = styled.div`
 export default function Start() {
   const history = useHistory();
   const [user, setUser] = useRecoilState(userState);
-  console.log(user);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({
@@ -27,10 +26,6 @@ export default function Start() {
       [name]: value,
     });
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <Container>

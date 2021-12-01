@@ -38,7 +38,6 @@ export default function Result() {
   const [jobsByMajor, setJobsByMajor] = useState();
   const location = useLocation();
   const { seq } = location?.state?.seq ? location.state : "";
-  console.log(user);
   const reportScores = useMemo(() => {
     if (report?.result?.wonScore) {
       const scores = report.result.wonScore
@@ -61,7 +60,6 @@ export default function Result() {
         scoresIndex.push(maxidx + 1);
       }
     }
-    console.log(scoresIndex);
     return scoresIndex;
   }, [reportScores]);
 
@@ -109,8 +107,6 @@ export default function Result() {
           const fieldSeq = [...Array(8).keys()];
           let temp = [];
           field.forEach((item) => temp.push({ field: item, job: [] }));
-          console.log(temp);
-          console.log(res);
           res.forEach((item) => {
             for (let i = 0; i < fieldSeq.length; i++) {
               if (fieldSeq[i] === item[2]) {
@@ -120,9 +116,7 @@ export default function Result() {
           });
           temp = temp.filter((item) => item.job.length);
           temp.forEach((item) => (item.job = item.job.join(" ")));
-          console.log(temp);
           setJobsByMajor(temp);
-          console.log(jobsByMajor);
         }
       }
     }
