@@ -30,7 +30,7 @@ api.getQuestions = async () => {
 api.submit = async ({ name, gender, startDtm, answers }) => {
   const qestrnSeq = QUESTION_SEQ;
   const trgetSe = TARGET_SEQ;
-  console.log({ name });
+  console.log({ name, gender, startDtm, answers });
   const res = await axios.post("/report", {
     apikey,
     qestrnSeq,

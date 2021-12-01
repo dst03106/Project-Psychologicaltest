@@ -1,5 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useEffect, useCallback } from "react";
+import { userAnswer, userReport } from "../../state";
+import { useRecoilState } from "recoil";
+import api from "../../api";
 
 const Container = styled.div`
   background-color: white;
@@ -14,6 +18,31 @@ const Container = styled.div`
 
 export default function Completed() {
   const location = useLocation();
+  const [answer, setAnswer] = useRecoilState(userAnswer);
+  const [report, setReport] = useRecoilState(userReport);
+  const { seq } = location?.state?.seq ? location.state : "";
+
+  const fetchReport = useCallback(async () => {
+    const res = await api.result.getReport({ seq });
+    console.log(res);
+    if (res) {
+      const { name, grade } = res.user;
+      const { registDt } = res.inspct;
+      console.log({ name, grade, registDt });
+      setAnswer({
+        username: name,
+        gender: grade == "100323" ? "남자" : "여자",
+        startDtm: registDt.substr(0, 10),
+      });
+    }
+    res && setReport(res);
+  }, [seq]);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport]);
+
+  useEffect(() => console.log(answer), [answer]);
 
   return (
     <Container>
