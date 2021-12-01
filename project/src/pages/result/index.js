@@ -38,7 +38,6 @@ export default function Result() {
   const [jobsByMajor, setJobsByMajor] = useState();
   const location = useLocation();
   const { seq } = location?.state?.seq ? location.state : "";
-
   console.log(user);
   const reportScores = useMemo(() => {
     if (report?.result?.wonScore) {

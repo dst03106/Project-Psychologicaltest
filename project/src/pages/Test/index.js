@@ -26,8 +26,6 @@ Test.defaultProps = {
 };
 function Test() {
   const [user, setUser] = useRecoilState(userState);
-  console.log(user);
-  useEffect(() => console.log(user), [user]);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -50,7 +48,6 @@ function Test() {
       setLoading(true);
     }
   }, [questions]);
-  useEffect(() => console.log(selectedVal), [selectedVal]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,8 +88,6 @@ function Test() {
   }, [selectedVal, curPage]);
 
   const handleSubmit = async () => {
-    // 일단 임시로 정의
-    console.log(user);
     const { username, gender, startDtm } = user;
 
     const answers = selectedVal
@@ -109,7 +104,6 @@ function Test() {
     });
 
     if (res?.url) {
-      console.log(res);
       const seq = res.url.split("seq=").pop();
       seq && history.push("/completed", { seq });
     }
