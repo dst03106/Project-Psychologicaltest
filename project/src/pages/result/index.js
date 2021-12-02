@@ -5,7 +5,7 @@ import Chart from "./Chart";
 import Table from "./Table";
 import styled from "styled-components";
 import { userState, userAnswer, userReport } from "../../state";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Container = styled.div`
   background-color: white;
@@ -32,8 +32,8 @@ const TableContainer = styled.div`
 
 export default function Result() {
   const [user, setUser] = useRecoilState(userState);
-  const [answer, setAnswer] = useRecoilState(userAnswer);
-  const [report, setReport] = useRecoilState(userReport);
+  const answer = useRecoilValue(userAnswer);
+  const report = useRecoilValue(userReport);
   const [jobsByEdu, setJobsByEdu] = useState();
   const [jobsByMajor, setJobsByMajor] = useState();
   const location = useLocation();
@@ -163,10 +163,10 @@ export default function Result() {
         date: answer.startDtm,
       },
     ],
-    [user]
+    [answer.username, answer.gender, answer.startDtm]
   );
 
-  const userColumns = useMemo(() => userColumnsData, []);
+  const userColumns = useMemo(() => userColumnsData, [userColumnsData]);
   const columns = useMemo(() => columnData, [columnData]);
   return (
     <Container>

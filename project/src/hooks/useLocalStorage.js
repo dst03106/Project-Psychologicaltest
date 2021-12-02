@@ -11,10 +11,13 @@ export default function useLocalStorage(key, defaultValue = null) {
     }
   });
 
-  useEffect(() => {
-    const rawValue = JSON.stringify(value);
-    window.localStorage.setItem(key, rawValue);
-  }, [value]);
+  useEffect(
+    (key) => {
+      const rawValue = JSON.stringify(value);
+      window.localStorage.setItem(key, rawValue);
+    },
+    [value]
+  );
 
   const reset = (key) => {
     window.localStorage.removeItem(key);

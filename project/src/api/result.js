@@ -6,11 +6,6 @@ const axios = Axios.create({
   baseURL: RESULT_URL,
 });
 
-const SUCCESS = {
-  Y: "Y",
-  N: "N",
-};
-
 const api = {};
 
 api.getReport = async ({ seq }) => {

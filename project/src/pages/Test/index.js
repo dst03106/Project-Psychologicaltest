@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Question from "./Question";
 import api from "../../api";
 import styled from "styled-components";
 import { ProgressBar } from "react-bootstrap";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { userState } from "../../state";
-import { useRecoilState, selector } from "recoil";
+import { useRecoilValue } from "recoil";
 
 const Container = styled.div`
   background-color: white;
@@ -25,7 +25,7 @@ Test.defaultProps = {
   header: [],
 };
 function Test() {
-  const [user, setUser] = useRecoilState(userState);
+  const user = useRecoilValue(userState);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -41,7 +41,7 @@ function Test() {
     return curPage && selectedVal
       ? Math.floor((selectedVal?.length * 100) / questions?.length)
       : 0;
-  }, [selectedVal, questions]);
+  }, [selectedVal, questions, curPage]);
 
   useEffect(() => {
     if (questions) {
@@ -74,7 +74,7 @@ function Test() {
   }
 
   const isDisabled = useMemo(() => {
-    if (curPage === 0 && !!selectedVal[0]) return false;
+    if (curPage === 0 && !selectedVal[0]) return true;
     if (curPage > 0) {
       for (let i = pageLimit * (curPage - 1); i < pageLimit * curPage; i++) {
         if (!selectedVal[i]) {
@@ -84,8 +84,8 @@ function Test() {
         }
       }
     }
-    return true;
-  }, [selectedVal, curPage]);
+    return false;
+  }, [selectedVal, curPage, questions?.length]);
 
   const handleSubmit = async () => {
     const { username, gender, startDtm } = user;
@@ -120,7 +120,7 @@ function Test() {
         </div>
       </div>
       <ProgressBar now={percentage} />
-      {curPage == 0 && (
+      {curPage === 0 && (
         <Question
           visible={true}
           question={"두 개 가치 중에 자신에게 더 중요한 가치를 선택하세요"}
@@ -159,7 +159,7 @@ function Test() {
           }
         )}
       <div className="d-flex justify-content-between">
-        {curPage > 0 && curPage != 1 && (
+        {curPage > 0 && curPage !== 1 && (
           <button
             type="button"
             className="btn btn-primary"
@@ -192,7 +192,7 @@ function Test() {
           </button>
         )}
         {/* 진행 페이지  */}
-        {curPage > 0 && curPage != lastPageIdx && (
+        {curPage > 0 && curPage !== lastPageIdx && (
           <button
             type="button"
             className="btn btn-primary"
@@ -202,7 +202,7 @@ function Test() {
             다음
           </button>
         )}
-        {curPage == lastPageIdx && (
+        {curPage === lastPageIdx && (
           <button
             type="button"
             className="btn btn-primary"

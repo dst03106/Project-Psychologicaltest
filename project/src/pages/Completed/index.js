@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useEffect, useCallback } from "react";
 import { userAnswer, userReport } from "../../state";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import api from "../../api";
 
 const Container = styled.div`
@@ -18,8 +18,8 @@ const Container = styled.div`
 
 export default function Completed() {
   const location = useLocation();
-  const [answer, setAnswer] = useRecoilState(userAnswer);
-  const [report, setReport] = useRecoilState(userReport);
+  const setAnswer = useSetRecoilState(userAnswer);
+  const setReport = useSetRecoilState(userReport);
   const { seq } = location?.state?.seq ? location.state : "";
 
   const fetchReport = useCallback(async () => {
@@ -29,12 +29,12 @@ export default function Completed() {
       const { registDt } = res.inspct;
       setAnswer({
         username: name,
-        gender: grade == "100323" ? "남자" : "여자",
+        gender: grade === "100323" ? "남자" : "여자",
         startDtm: registDt.substr(0, 10),
       });
     }
     res && setReport(res);
-  }, [seq]);
+  }, [seq, setReport, setAnswer]);
 
   useEffect(() => {
     fetchReport();
