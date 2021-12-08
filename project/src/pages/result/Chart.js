@@ -53,7 +53,6 @@ export default function Chart({ scores }) {
   return (
     <div
       style={{
-        width: 800,
         height: 400,
       }}
     >
